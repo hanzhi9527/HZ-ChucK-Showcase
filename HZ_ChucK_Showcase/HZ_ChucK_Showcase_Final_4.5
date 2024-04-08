@@ -1,0 +1,153 @@
+SndBuf aliapr => Pan2 pan => dac; // alienappear
+SndBuf alistrt => pan => dac;//alienstarttalking
+SndBuf hoohoo => pan => dac;     //hoohoo
+SndBuf dsmi => pan => dac;   //devilsmile
+
+SndBuf boing => pan => dac;   //boing
+
+SndBuf alilv => pan => dac; //alienleave
+SndBuf alilv2 => pan => dac; //alienleave2
+SndBuf phew => pan => dac; //phew
+SndBuf firevic => pan => dac; //firevictory
+
+me.dir() + "/audio/alienappear.wav" => aliapr.read;
+me.dir() + "/audio/alienstarttalking.wav" => alistrt.read;
+me.dir() + "/audio/hoohoo.wav" => hoohoo.read;
+me.dir() + "/audio/devilsmile.wav" => dsmi.read;
+
+me.dir() + "/audio/sm64_mario_boing.wav" => boing.read;
+
+me.dir() + "/audio/alienleave.wav" => alilv.read;
+me.dir() + "/audio/alienleave2.wav" => alilv2.read;
+me.dir() + "/audio/phew.wav" => phew.read;
+me.dir() + "/audio/firevictory.wav" => firevic.read;
+
+aliapr.samples() => aliapr.pos;
+alistrt.samples() => alistrt.pos;
+hoohoo.samples() => hoohoo.pos;
+dsmi.samples() => dsmi.pos;
+
+boing.samples() => boing.pos;
+
+alilv.samples() => alilv.pos;
+alilv2.samples() => alilv2.pos;
+phew.samples() => phew.pos;
+firevic.samples() => firevic.pos;
+
+SndBuf alifire => Pan2 alifirepan => dac; //alienfire
+SndBuf mshoot => Pan2 mshootpan => dac; // marioshoot
+me.dir() + "/audio/alienfire.wav" => alifire.read;
+me.dir() + "/audio/marioshoot.wav" => mshoot.read;
+alifire.samples() => alifire.pos;
+mshoot.samples() => mshoot.pos;
+
+fun void key() {
+//keyboard
+Hid kyb;
+HidMsg kybmsg;
+1 => int keyboard;
+// open keyboard 0, exit on fail
+if (!kyb.openKeyboard (keyboard) ) me.exit();
+<<< "keyboard '" + kyb.name() + "'ready", "" >>>;
+
+
+
+while(true)
+{
+    kyb => now;
+    
+    while (kyb.recv (kybmsg) )
+    {
+        if (kybmsg.isButtonDown())
+        {
+            <<< "button:", kybmsg.ascii >>>;
+            
+            if (kybmsg.ascii == 81) // button "q"
+            {
+                0 => aliapr.pos;    //alien appear
+                0.07 => pan.gain;
+            }
+            if (kybmsg.ascii == 87) // button "w"
+            {
+                0 => alistrt.pos;   //alien start talking
+                0.07 => pan.gain;
+            }
+            if (kybmsg.ascii == 69) // button "e"
+            {
+                0 => hoohoo.pos;  // hoo hoo
+                0.07 => pan.gain;
+            }
+            if (kybmsg.ascii == 82) // button "r"
+            {
+                0 => dsmi.pos;   // devil smile
+                0.07 => pan.gain;
+            }
+            if (kybmsg.ascii == 65) // button "a"
+            {
+                0 => boing.pos;  // boing
+                0.07 => pan.gain;
+            }
+            if (kybmsg.ascii == 83) // button "s"
+            {
+                0 => alilv.pos;   //alien leave
+                0.07 => pan.gain;
+            }
+            if (kybmsg.ascii == 68) // button "d"
+            {
+                0 => alilv2.pos;   //alien leave2
+                0.07 => pan.gain;
+            }
+            if (kybmsg.ascii == 70) // button "f"
+            {
+                0 => phew.pos;   //phew
+                0.07 => pan.gain;
+            }
+            if (kybmsg.ascii == 71) // button "g"
+            {
+                0 => firevic.pos;   //fire victory
+                0.07 => pan.gain;
+            }
+            
+            
+        }
+    }
+}
+}
+
+fun void joy () {
+    // make HidIn and HidMsg
+    Hid jst;
+    HidMsg jstmsg;
+    // which joystick
+    0 => int joystick;
+    // open joystick 0, exit on faila
+    if( !jst.openJoystick( joystick ) ) me.exit();
+    <<< "joystick '" + jst.name() + "' ready", "" >>>;
+    while(true){
+        jst => now;
+        
+        while( jst.recv( jstmsg ) )
+        {
+            
+            if (jstmsg.isButtonDown())
+            {
+                <<< "button:", jstmsg.which >>>;
+                if (jstmsg.which == 2) // button 2
+                {
+                    0 => alifire.pos;
+                    0.07 => pan.gain;
+                } 
+                if (jstmsg.which == 3) // button 3
+                {
+                    0 => mshoot.pos;
+                    0.07 => pan.gain;
+                }
+            }
+        }
+        
+    }
+}
+
+spork ~ key();
+spork ~ joy();
+while (true) 1:: second => now;
